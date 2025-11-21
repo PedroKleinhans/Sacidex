@@ -1,81 +1,73 @@
 import { main } from '../main.js';
+
 export function createPokemonCard(pokemon) {
-    // 1. Crie o elemento do card
+    // Cria o elemento do card
     const card = document.createElement('div');
     card.classList.add('card');
-    
 
-    // 2. Defina o destino do link para a página de detalhes
-    // O caminho é relativo de 'modules/index.html' para 'modules/pages/pokemon.html'
+    // Define o destino do link para a página de detalhes
     card.addEventListener("click", () => {
         window.location.href = `pages/pokemon.html?id=${pokemon.id}`;
     });
 
-    // Cria o botão dinamicamente
+    // Cria o container do botão de favorito
     const divButton = document.createElement('div');
-    divButton.classList.add('button-favorite')
-
-
+    divButton.classList.add('button-favorite');
 
     const button = document.createElement("button");
-    const imageButton = document.createElement("img")
-    button.classList.add("card-favoriteButton");
-    button.addEventListener('click', (e) => {
-        // Checa se o botão já está ativo
-        const isActive = button.classList.contains('active');
+    const imageButton = document.createElement("img");
+    let particleTimeout = 0;
 
-        // Alterna a classe
+    button.classList.add("card-favoriteButton");
+
+    // Animação de partículas ao favoritar
+    button.addEventListener('click', (e) => {
+        const isActive = button.classList.contains('active');
         button.classList.toggle('active');
 
-        // Só dispara partículas se ele **ficou ativo** agora
         if (!isActive) {
-            // delay de 3 segundos antes das partículas
-            setTimeout(() => {
+            particleTimeout = setTimeout(() => {
                 const numStars = 15;
                 for (let i = 0; i < numStars; i++) {
                     const star = document.createElement('span');
                     star.classList.add('star');
 
-                    // posição inicial
-
-
-                    // direção aleatória para cima
                     const distance = 50 + Math.random() * 50;
-                    const xDir = (Math.random() - 0.5) * distance * 2; // pode ir para esquerda (-) ou direita (+)
-                    const yDir = -distance; // sempre sobe
+                    const xDir = (Math.random() - 0.5) * distance * 2;
+                    const yDir = -distance;
 
                     star.style.setProperty('--x', `${xDir}px`);
                     star.style.setProperty('--y', `${yDir}px`);
 
-
                     button.appendChild(star);
 
-                    // remove depois de 3s
                     setTimeout(() => {
                         star.remove();
                     }, 3000);
                 }
-            }, 3300); // delay 3 segundos
+            }, 3300);
+        } else {
+            clearTimeout(particleTimeout);
+            const stars = button.querySelectorAll('.star');
+            stars.forEach(star => star.remove());
         }
     });
+
+    // Impede o redirecionamento ao clicar no botão
     button.addEventListener('click', function (event) {
-        // Impede o comportamento padrão do evento
         event.preventDefault();
     });
 
-
+    // Gerencia favoritos no localStorage
     button.addEventListener("click", (event) => {
-        event.stopPropagation(); // Impede que o clique no botão dispare o evento do card
+        event.stopPropagation(); // Impede clique no botão de abrir o card
 
         const pageFavorite = localStorage.getItem("pageFavorite");
         if (pageFavorite === 'true') {
             localStorage.setItem("clickFavorite", 'true');
         }
 
-        // Pega os favoritos salvos (ou cria um array vazio)
         const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-
-        // Verifica se o Pokémon já está favoritado
         const index = favoritos.findIndex(p => p.id === pokemon.id);
 
         if (index >= 0) {
@@ -90,26 +82,22 @@ export function createPokemonCard(pokemon) {
             button.classList.add('active');
         }
 
-        // Salva de volta no localStorage
         localStorage.setItem("favoritos", JSON.stringify(favoritos));
 
         function verificarFavoritePage() {
             if (pageFavorite === 'true') {
-                const getFavoritos = localStorage.getItem("favoritos");
-                const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
                 localStorage.removeItem("clickFavorite");
+                const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
                 main(favoritos);
             }
         }
 
         verificarFavoritePage();
-
-
     });
 
-    // Retorna o css certo segundo o estado de favorito
+    // Função para verificar se o Pokémon já está favoritado
     function verificarCaptura() {
-        const favoritos = JSON.parse(localStorage.getItem("favoritos"));
+        const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
 
         // Verifica se o Pokémon já está favoritado
         const index = favoritos.findIndex(p => p.id === pokemon.id);
@@ -124,20 +112,24 @@ export function createPokemonCard(pokemon) {
     }
 
     verificarCaptura();
-    card.style.textDecoration = 'none'; // Remove sublinhado
-    card.style.color = 'inherit';     // Usa a cor do texto normal do card
 
+    // Estilização base
+    card.style.textDecoration = 'none';
+    card.style.color = 'inherit';
+
+    // Header
     const header = document.createElement('div');
     header.classList.add('card-header');
 
     const id = document.createElement('span');
     id.classList.add('card-id');
-    id.textContent = `#${pokemon.id.toString().padStart(4, '0')}`
+    id.textContent = `#${pokemon.id.toString().padStart(4, '0')}`;
 
     const name = document.createElement('h2');
     name.classList.add('card-name');
     name.textContent = pokemon.name;
 
+    // Tipos
     const types = document.createElement('div');
     types.classList.add('card-types');
     pokemon.types.forEach(t => {
@@ -147,39 +139,50 @@ export function createPokemonCard(pokemon) {
         types.appendChild(type);
     });
 
+    // Imagem
     const imageContainer = document.createElement('div');
     imageContainer.classList.add('card-image');
 
     const image = document.createElement('img');
     image.src = pokemon.sprites.other["official-artwork"].front_default;
-    image.alt = pokemon.name
+    image.alt = pokemon.name;
     imageContainer.appendChild(image);
 
+    // Montagem final
     header.appendChild(divButton);
     divButton.appendChild(button);
     button.appendChild(imageButton);
-
-
-    header.appendChild(name)
+    header.appendChild(name);
     header.appendChild(id);
-
-
-
-
-
 
     card.appendChild(header);
     card.appendChild(imageContainer);
     card.appendChild(types);
 
-
-
-
+    // Adiciona observer para animação ao entrar na tela
+    if (typeof IntersectionObserver !== 'undefined') {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('card-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '50px'
+        });
+        observer.observe(card);
+    } else {
+        // Fallback para navegadores sem suporte
+        card.classList.add('card-visible');
+    }
 
     return card;
 }
 
-export function createDeatailCard(pokemon) {
+// Corrige o nome da função (era "createDeatailCard")
+export function createDetailCard(pokemon) {
     const container = document.querySelector('.pokemon-id');
     container.textContent = `#${pokemon.id.toString().padStart(4, '0')}`;
 }

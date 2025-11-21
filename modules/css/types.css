@@ -3,7 +3,7 @@ body.type-fire {
 }
 
 body.type-water {
-    background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+    background: linear-gradient(135deg, #0099ff 0%, #0072ff 100%);
 }
 
 body.type-grass {
@@ -47,15 +47,15 @@ body.type-flying {
 }
 
 body.type-poison {
-    background: linear-gradient(135deg, #7f00ff 0%, #8dcf1b 100%);
+    background: linear-gradient(135deg, #7f00ff 0%, #80b623 100%);
 }
 
 body.type-ground {
-    background: linear-gradient(135deg, #e0c068 0%, #b88a4a 100%);
+    background: linear-gradient(135deg, #e7b93b 0%, #ec971f 100%);
 }
 
 body.type-rock {
-    background: linear-gradient(135deg, #8a8a83 0%, #5e5e57 100%);
+    background: linear-gradient(135deg, #686868 0%, #8a8a83 100%);
 }
 
 body.type-bug {

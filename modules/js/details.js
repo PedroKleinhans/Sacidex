@@ -1,13 +1,10 @@
-import { pokemons } from './data.js';
-
+// coleta elementos do HTML
 const botao = document.getElementById("botao");
 const busca = document.getElementById("busca");
 const favoriteButton = document.getElementById("favorite-btn");
 
-// Mapa de cores removido - agora usando classes CSS com gradientes
-
 /**
- * Tabela de fraquezas por tipo
+ * Fraquezas por tipo
  */
 const typeWeaknesses = {
     fire: ['water', 'ground', 'rock'],
@@ -30,28 +27,32 @@ const typeWeaknesses = {
     steel: ['fire', 'fighting', 'ground']
 };
 
+
 /**
- * Função principal para carregar os detalhes
+ * CARREGAR DETALHES DO POKEMON
  */
-function loadDetail() {
+async function loadDetail() {
+
     const params = new URLSearchParams(window.location.search);
     const pokemonId = params.get('id');
 
     if (!pokemonId) {
-        console.error("ID do Pokémon não encontrado na URL.");
-        document.querySelector('.sobrepokemon p').textContent = "Erro: ID do Pokémon não encontrado na URL.";
+        console.error("ID do Pokémon não encontrado.");
         return;
     }
 
-    const pokemon = pokemons.find(p => p.id == pokemonId);
+    // BUSCA DIRETAMENTE NA API
+    const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
 
-    if (!pokemon) {
-        console.error("Pokémon não encontrado no array 'data.js'.");
-        document.querySelector('.sobrepokemon p').textContent = `Erro: Pokémon com ID ${pokemonId} não foi encontrado.`;
-        return;
-    }
+    const response = await fetch(url);
+    const pokemon = await response.json();
 
     fillPageWithPokemonData(pokemon);
+
+    // Carrega dados adicionais para evoluções e espécie
+    await loadEvolutionChain(pokemon.species.url);
+    await loadSpeciesData(pokemon.species.url);
+
     setupTabs();
 }
 
@@ -59,17 +60,18 @@ function loadDetail() {
 
 
 /**
- * Esta função preenche seu HTML usando os dados do Pokémon
+ * Preenche os dados da página de detalhes
  */
 function fillPageWithPokemonData(pokemon) {
-    // Aplica cor de fundo baseada no tipo primário
+
     const primaryType = pokemon.types[0].type.name;
     applyBackgroundColor(primaryType);
 
-    // Pokemon ID
-    document.querySelector('.pokemon-id').textContent = `#${pokemon.id.toString().padStart(3, '0')}`;
+    // ID
+    document.querySelector('.pokemon-id').textContent =
+        `#${pokemon.id.toString().padStart(4, '0')}`;
 
-    // Pokemon image
+    // IMAGEM
     const imgElement = document.querySelector('.pokeimg img');
     imgElement.src = pokemon.sprites.other["official-artwork"].front_default;
     imgElement.alt = pokemon.name;
@@ -104,118 +106,406 @@ buttonShine.addEventListener('click', () => {
     // TIPOS
     const typesContainer = document.querySelector('#TypesIMG');
     typesContainer.innerHTML = "";
-
-    pokemon.types.forEach(typeInfo => {
-        const typeName = typeInfo.type.name;
-        const typeSpan = document.createElement('span');
-        typeSpan.textContent = typeName;
-        typeSpan.className = `type ${typeName}`;
-        typesContainer.appendChild(typeSpan);
+    pokemon.types.forEach(t => {
+        const span = document.createElement("span");
+        span.textContent = t.type.name;
+        span.className = `type ${t.type.name}`;
+        typesContainer.appendChild(span);
     });
 
 
     // Weaknesses
     const weaknessContainer = document.querySelector('#WeaknessesIMG');
     weaknessContainer.innerHTML = "";
-
     const weaknesses = getWeaknesses(pokemon.types);
-    weaknesses.forEach(weakness => {
-        const weakSpan = document.createElement('span');
-        weakSpan.textContent = weakness;
-        weakSpan.className = `type ${weakness}`;
-        weaknessContainer.appendChild(weakSpan);
+    weaknesses.forEach(w => {
+        const span = document.createElement("span");
+        span.textContent = w;
+        span.className = `type ${w}`;
+        weaknessContainer.appendChild(span);
     });
 
-    // Weight and Height (mock data - you can add these to data.js)
-    document.querySelector('.pokemon-weight').textContent = `${(pokemon.id * 10 + 50) / 10}kg`;
-    document.querySelector('.pokemon-height').textContent = `${(pokemon.id * 5 + 100) / 100}m`;
+
+    document.querySelector('.pokemon-weight').textContent = `${pokemon.weight / 10}kg`;
+    document.querySelector('.pokemon-height').textContent = `${pokemon.height / 10}m`;
+
+    fillStatusTab(pokemon.stats);
+    fillMovesTab(pokemon.moves);
+
 }
 
+
 /**
- * Aplica classe CSS de gradiente baseada no tipo do Pokemon
+ * Carrega dados da espécie (descrição, gender_rate, catch_rate)
+ */
+async function loadSpeciesData(speciesUrl) {
+    try {
+        const response = await fetch(speciesUrl);
+        const speciesData = await response.json();
+
+        // Obter descrição em inglês (flavor_text)
+        const flavorText = speciesData.flavor_text_entries.find(
+            entry => entry.language.name === 'en'
+        );
+
+        const description = flavorText
+            ? flavorText.flavor_text.replace(/[\n\f]/g, ' ').trim()
+            : 'Descrição não disponível';
+
+        // Preencher descrição
+        document.querySelector('.sobrepokemon').innerHTML = `<p>${description}</p>`;
+
+        // Gender Rate
+        const genderRate = speciesData.gender_rate;
+        fillGenderRate(genderRate);
+
+        // Catch Rate
+        const catchRate = speciesData.capture_rate;
+        fillCatchRate(catchRate);
+
+    } catch (error) {
+        console.error("Erro ao carregar dados da espécie:", error);
+        document.querySelector('.sobrepokemon').innerHTML = `<p>Erro ao carregar descrição</p>`;
+    }
+}
+
+
+/**
+ * Preenche a taxa de gênero
+ */
+function fillGenderRate(genderRate) {
+    // Gender rate varia de -1 (sem gênero) a 8 (todas fêmeas)
+    // -1 = sem gênero, 0 = 100% macho, 8 = 100% fêmea
+
+    let malePercentage = 0;
+    let femalePercentage = 0;
+    let displayText = 'Sem Gênero';
+
+    if (genderRate === -1) {
+        displayText = 'Sem Gênero';
+    } else {
+        malePercentage = ((8 - genderRate) / 8) * 100;
+        femalePercentage = (genderRate / 8) * 100;
+        displayText = `${malePercentage.toFixed(1)}% / ${femalePercentage.toFixed(1)}%`;
+    }
+
+    // Atualizar barra de progresso
+    const progressFill = document.querySelector('.progress-fill-male');
+    progressFill.style.width = `${malePercentage}%`;
+
+    // Atualizar texto
+    document.querySelector('.progress-gender-custom .progress-text').textContent = displayText;
+}
+
+
+/**
+ * Preenche a taxa de captura
+ */
+function fillCatchRate(catchRate) {
+    // Catch rate é um valor de 0 a 255
+    // Calcular percentual
+    const catchPercentage = (catchRate / 255) * 100;
+
+    // Atualizar barra de progresso
+    const progressFill = document.querySelector('.progress-fill-catch');
+    progressFill.style.width = `${catchPercentage}%`;
+
+    // Atualizar texto
+    document.querySelector('.catchrate-text').textContent = `${catchRate}/255`;
+}
+
+
+/**
+ *Aplica gradiente do tipo no background
  */
 function applyBackgroundColor(type) {
-    // Remove todas as classes de tipo existentes
-    document.body.className = document.body.className.replace(/type-\w+/g, '');
-
-    // Adiciona a nova classe de tipo
+    // preservar se o usuário já está no tema escuro
+    const isDark = document.body.classList.contains('dark');
+    // limpa somente classes anteriores de tipo, preservando 'dark' se presente
+    document.body.className = isDark ? 'dark' : '';
     document.body.classList.add(`type-${type}`);
 }
 
-/**
- * Obtém as fraquezas baseadas nos tipos do Pokemon
- */
-function getWeaknesses(types) {
-    const weaknessSet = new Set();
+/* ==========================
+   Tema (dark/light) para a página de detalhes
+   ========================== */
+let toggleThemeBtn;
+let toggleThemeImg;
+let headerEl;
+let iconImg;
+let logoImg;
 
-    types.forEach(typeInfo => {
-        const typeName = typeInfo.type.name;
-        const weaknesses = typeWeaknesses[typeName] || [];
-        weaknesses.forEach(w => weaknessSet.add(w));
-    });
+function aplicarTemaDetalhes(tema) {
+    if (!headerEl) headerEl = document.querySelector('header');
+    if (!iconImg) iconImg = document.querySelector('.icon');
+    if (!logoImg) logoImg = document.querySelector('.sacidex');
 
-    return Array.from(weaknessSet).slice(0, 3); // Limita a 3 fraquezas principais
+    if (tema === 'dark') {
+        document.body.classList.add('dark');
+        headerEl && headerEl.classList.add('dark-header');
+        // trocar logos para versão branca (caminho relativo nesta página)
+        if (toggleThemeImg) toggleThemeImg.src = '../../assets/img/sunwhite.png';
+        if (iconImg) iconImg.src = '../../assets/img/pokebola-logo-branca.png';
+        if (logoImg) logoImg.src = '../../assets/img/logo-sacidex-branca.png';
+    } else {
+        document.body.classList.remove('dark');
+        headerEl && headerEl.classList.remove('dark-header');
+        if (toggleThemeImg) toggleThemeImg.src = '../../assets/img/moon-icon.png';
+        if (iconImg) iconImg.src = '../../assets/img/pokebola-logo.png';
+        if (logoImg) logoImg.src = '../../assets/img/logo-sacidex.png';
+    }
+    localStorage.setItem('theme', tema);
 }
 
+function verificarTemaDetalhes() {
+    const tema = localStorage.getItem('theme') || 'light';
+    aplicarTemaDetalhes(tema);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // selecionar elementos só após DOM pronto
+    toggleThemeBtn = document.querySelector('.toggle-theme button');
+    toggleThemeImg = document.getElementById('toggleTheme');
+    headerEl = document.querySelector('header');
+    iconImg = document.querySelector('.icon');
+    logoImg = document.querySelector('.sacidex');
+
+    // anexar listeners de clique
+    if (toggleThemeBtn) {
+        toggleThemeBtn.addEventListener('click', () => {
+            const atual = localStorage.getItem('theme') || 'light';
+            aplicarTemaDetalhes(atual === 'dark' ? 'light' : 'dark');
+        });
+    } else if (toggleThemeImg) {
+        toggleThemeImg.addEventListener('click', () => {
+            const atual = localStorage.getItem('theme') || 'light';
+            aplicarTemaDetalhes(atual === 'dark' ? 'light' : 'dark');
+        });
+    }
+
+    verificarTemaDetalhes();
+});
+
+
 /**
- * Configura as abas
+ * Calcula fraquezas
+ */
+function getWeaknesses(types) {
+    const set = new Set();
+    types.forEach(t => {
+        const w = typeWeaknesses[t.type.name] || [];
+        w.forEach(item => set.add(item));
+    });
+    return Array.from(set).slice(0, 3);
+}
+
+
+/**
+ * Tabs (status / sobre / movimentos)
  */
 function setupTabs() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
+    const buttons = document.querySelectorAll('.tab-button');
+    const contents = document.querySelectorAll('.tab-content');
 
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove active de todos
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
 
-            // Adiciona active ao clicado
-            button.classList.add('active');
-            const tabName = button.getAttribute('data-tab');
-            document.getElementById(`${tabName}-tab`).classList.add('active');
+            btn.classList.add('active');
+            const tab = btn.dataset.tab;
+            document.getElementById(`${tab}-tab`).classList.add('active');
         });
     });
 }
 
+
 /**
- * Navegação entre Pokemon
+ * Navegação entre pokemons
  */
 window.navigatePokemon = function (direction) {
     const params = new URLSearchParams(window.location.search);
-    const currentId = parseInt(params.get('id'));
+    const current = Number(params.get('id'));
 
-    const currentIndex = pokemons.findIndex(p => p.id === currentId);
-    let newIndex;
+    let next = direction === "prev" ? current - 1 : current + 1;
 
-    if (direction === 'prev') {
-        newIndex = currentIndex > 0 ? currentIndex - 1 : pokemons.length - 1;
-    } else {
-        newIndex = currentIndex < pokemons.length - 1 ? currentIndex + 1 : 0;
-    }
+    if (next < 1) next = 151;
+    if (next > 151) next = 1;
 
-    const newPokemonId = pokemons[newIndex].id;
-    window.location.href = `pokemon.html?id=${newPokemonId}`;
+    window.location.href = `pokemon.html?id=${next}`;
+};
+
+
+/**
+ * Preenche aba de Status
+ */
+function fillStatusTab(stats) {
+    const statusTab = document.getElementById('status-tab');
+
+    const statsHTML = stats.map(stat => {
+        const statName = stat.stat.name
+            .replace('special-attack', 'Sp. Attack')
+            .replace('special-defense', 'Sp. Defense')
+            .replace('hp', 'HP')
+            .replace('attack', 'Attack')
+            .replace('defense', 'Defense')
+            .replace('speed', 'Speed');
+
+        const percentage = Math.min((stat.base_stat / 255) * 100, 100);
+
+        return `
+            <div class="stat-row">
+                <div class="stat-name">${statName}</div>
+                <div class="stat-value">${stat.base_stat}</div>
+                <div class="stat-bar">
+                    <div class="stat-fill" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    statusTab.innerHTML = `
+        <div class="stats-container">
+            ${statsHTML}
+        </div>
+    `;
 }
 
-// Roda o script assim que a página carrega
+
+/**
+ * Preenche aba de Moves
+ */
+function fillMovesTab(moves) {
+    const movesTab = document.getElementById('moves-tab');
+
+    // Ordena moves por nível aprendido
+    const sortedMoves = moves
+        .filter(m => m.version_group_details[0])
+        .sort((a, b) => {
+            const levelA = a.version_group_details[0].level_learned_at;
+            const levelB = b.version_group_details[0].level_learned_at;
+            return levelA - levelB;
+        });
+
+    const movesHTML = sortedMoves.slice(0, 30).map(move => {
+        const learnMethod = move.version_group_details[0].move_learn_method.name;
+        const level = move.version_group_details[0].level_learned_at;
+
+        let learnInfo = '';
+        if (learnMethod === 'level-up' && level > 0) {
+            learnInfo = `Nível ${level}`;
+        } else if (learnMethod === 'machine') {
+            learnInfo = 'TM/HM';
+        } else if (learnMethod === 'egg') {
+            learnInfo = 'Egg Move';
+        } else if (learnMethod === 'tutor') {
+            learnInfo = 'Tutor';
+        } else {
+            learnInfo = learnMethod;
+        }
+
+        return `
+            <div class="move-item">
+                <div class="move-name">${move.move.name.replace(/-/g, ' ')}</div>
+                <div class="move-learn">${learnInfo}</div>
+            </div>
+        `;
+    }).join('');
+
+    movesTab.innerHTML = `
+        <div class="moves-container">
+            ${movesHTML}
+        </div>
+    `;
+}
+
+
+/**
+ * Carrega cadeia evolutiva
+ */
+async function loadEvolutionChain(speciesUrl) {
+    try {
+        const speciesResponse = await fetch(speciesUrl);
+        const speciesData = await speciesResponse.json();
+
+        const evolutionResponse = await fetch(speciesData.evolution_chain.url);
+        const evolutionData = await evolutionResponse.json();
+
+        await fillEvolutionsTab(evolutionData.chain);
+    } catch (error) {
+        console.error("Erro ao carregar evoluções:", error);
+        document.getElementById('evolucoes-tab').innerHTML = `
+            <div style="padding: 40px; text-align: center;">
+                <p style="color: #999;">Não foi possível carregar as evoluções.</p>
+            </div>
+        `;
+    }
+}
+
+
+/**
+ * Preenche aba de Evoluções
+ */
+async function fillEvolutionsTab(chain) {
+    const evolutions = [];
+
+    // Função recursiva para extrair toda a cadeia
+    function extractEvolutions(node) {
+        const pokemonName = node.species.name;
+        const pokemonId = node.species.url.split('/').filter(Boolean).pop();
+
+        evolutions.push({ name: pokemonName, id: pokemonId });
+
+        if (node.evolves_to.length > 0) {
+            node.evolves_to.forEach(evo => extractEvolutions(evo));
+        }
+    }
+
+    extractEvolutions(chain);
+
+    // Busca imagens para cada evolução
+    const evolutionsWithImages = await Promise.all(
+        evolutions.map(async (evo) => {
+            try {
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${evo.id}`);
+                const data = await response.json();
+                return {
+                    ...evo,
+                    image: data.sprites.other["official-artwork"].front_default,
+                    types: data.types
+                };
+            } catch (error) {
+                console.error(`Erro ao carregar ${evo.name}:`, error);
+                return evo;
+            }
+        })
+    );
+
+    const evolutionsHTML = evolutionsWithImages.map((evo, index) => {
+        const typesHTML = evo.types ? evo.types.map(t =>
+            `<span class="type ${t.type.name}">${t.type.name}</span>`
+        ).join('') : '';
+
+        return `
+            <div class="evolution-item">
+                ${index > 0 ? '<div class="evolution-arrow">→</div>' : ''}
+                <div class="evolution-card">
+                    <img src="${evo.image}" alt="${evo.name}" class="evolution-img">
+                    <div class="evolution-name">${evo.name}</div>
+                    <div class="evolution-id">#${evo.id.padStart(4, '0')}</div>
+                    <div class="evolution-types">${typesHTML}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('evolucoes-tab').innerHTML = `
+        <div class="evolutions-container">
+            ${evolutionsHTML}
+        </div>
+    `;
+}
+
+
+// roda ao abrir
 loadDetail();
-
-// Evento do botão de busca que salva no localStorage e volta para a index
-botao.addEventListener("click", () => {
-    const textoBusca = busca.value;
-    localStorage.setItem("busca", textoBusca);
-    window.location.href = "../index.html";
-});
-// Evento do botão de favoritos que salva a página atual no localStorage e volta para a index
-favoriteButton.addEventListener("click", () => {
-    localStorage.setItem("page", "outraPage");
-    window.location.href = "../index.html";
-});
-
-// Evento para permitir busca ao pressionar Enter
-busca.addEventListener("keypress", (event) => {
-  if (event.key === "Enter") {
-    botao.click(); // simula o clique do botão
-  }
-});

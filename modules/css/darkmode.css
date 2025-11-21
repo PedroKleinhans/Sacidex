@@ -1,5 +1,161 @@
-body.dark {
-    background-color: #1A1A1A;
+.dark {
+    background-color: #121212;
+}
+
+.dark .header {
+    background-color: #1e1e1e;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.dark .nav a {
+    color: #e0e0e0;
+}
+
+.dark .nav a:hover {
+    color: #ffffff;
+}
+
+.dark .search input {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.dark .search input::placeholder {
+    color: #757575;
+}
+
+.dark .search button {
+    background-color: #2a2a2a;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.dark .search button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Tema escuro para página de detalhes */
+.dark .cont {
+    background: #252525;
+}
+
+.dark .tabs-nav {
+    background: #252525;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .tab-button {
+    color: #999;
+}
+
+.dark .tab-button.active {
+    color: #fff;
+    border-bottom-color: var(--type-accent);
+}
+
+.dark .tab-content {
+    background: transparent;
+    color: #e0e0e0;
+}
+
+.dark .typeinfo {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark #tipopoke p,
+.dark #weaknesspoke p {
+    color: #e0e0e0;
+}
+
+.dark .percentinfo {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .gender-text-row,
+.dark .catchrate-title-row {
+    color: #e0e0e0;
+}
+
+.dark .progress-gender-custom {
+    background-color: rgba(255, 69, 180, 0.15);
+}
+
+.dark .progress-text {
+    color: #fff;
+}
+
+.dark .progress-catchrate-custom {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .catchrate-text {
+    color: #e0e0e0;
+}
+
+.dark .sobrepokemon {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .sobrepokemon p {
+    color: #b0b0b0;
+}
+
+.dark .pokemon-bottom-info {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark .info-item span {
+    color: #e0e0e0;
+}
+
+.dark .stat-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark .stat-name {
+    color: #e0e0e0;
+}
+
+.dark .stat-value {
+    color: #999;
+}
+
+.dark .stat-bar {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .move-item {
+    background: #252525;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark .move-item:hover {
+    background: #2a2a2a;
+}
+
+.dark .move-name {
+    color: #e0e0e0;
+}
+
+.dark .move-learn {
+    background: #1a1a1a;
+    color: #999;
+}
+
+.dark .evolution-card {
+    background: #252525;
+}
+
+.dark .evolution-card:hover {
+    background: #2a2a2a;
+}
+
+.dark .evolution-name {
+    color: #e0e0e0;
+}
+
+.dark .evolution-id {
+    color: #999;
 }
 
 
@@ -8,8 +164,7 @@ body.dark {
     transition: 0.3s ease-in;
 }
 
-#toggleTheme:hover
-{
+#toggleTheme:hover {
     transform: scale(1.15);
 }
 
@@ -26,28 +181,25 @@ body.dark {
     margin-bottom: 25px;
 }
 
-.header.dark-header
-{
+.header.dark-header {
     background-color: #252525;
-    
+
 
 }
-.header.dark-header a
-{
+
+.header.dark-header a {
     color: white;
 
 }
-.header.dark-header .search input
-{
-    color: rgb(255, 6, 6);
+
+.header.dark-header .search input {
     background-color: #464646;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 
 
 }
 
-.header.dark-header .search button
-{
+.header.dark-header .search button {
     background-color: #464646;
 }
 
@@ -58,21 +210,147 @@ body.dark {
     background-color: rgb(91, 91, 91);
 }
 
-.header.dark-header .dark-mode
-{
+.header.dark-header .dark-mode {
     height: auto;
     width: 38px;
 }
 
-
-.card.dark-card
-{
-        background: linear-gradient(135deg, #252525 0%, #252525 100%);
-
+/* Estilos dos cards em modo escuro */
+.card.dark-card {
+    background: linear-gradient(135deg, #252525 0%, #252525 100%);
 }
 
-.card-id.dark
-{
+.card-id.dark {
     background-color: #3d3c3c;
     color: #ccc;
+}
+
+.dark .card {
+    background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .card:hover {
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+}
+
+.dark .card::before {
+    background: linear-gradient(90deg, #3a3a3a, #e6e6e6, #3a3a3a);
+}
+
+.dark .card-name {
+    color: #e0e0e0;
+}
+
+.dark .card-id {
+    color: #b0b0b0;
+    background: #1a1a1a;
+}
+
+.dark .card-header {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .card-image img {
+    filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.2));
+}
+
+.dark .card:hover .card-image img {
+    filter: drop-shadow(0 8px 20px rgba(255, 255, 255, 0.3));
+}
+
+/* Quando o menu mobile estiver aberto no modo escuro, garantir contraste */
+body.dark header.menu-open .nav {
+    background-color: #1e1e1e;
+    /* segue cor do header escuro */
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+body.dark header.menu-open .nav a {
+    color: #e0e0e0;
+    /* links claros sobre fundo escuro */
+}
+
+/* Nav arrows (modo escuro) */
+.dark .nav-arrow {
+    color: rgba(255, 255, 255, 0.95);
+    background: none;
+    /* remove fundo oval no modo escuro */
+    box-shadow: none;
+    /* remove sombra que destacava oval */
+    border-radius: 0;
+    /* sem forma circular */
+}
+
+/* Ajustes para a caixa de filtro no modo escuro */
+.dark .filter-box {
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+}
+
+.dark .type-btn {
+    background: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark .type-btn:hover {
+    background: #333333;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .type-btn.active {
+    background: #0078ff;
+    border-color: #0078ff;
+    color: #fff;
+}
+
+.dark #filter-toggle {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark #filter-toggle:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* Container de detalhes (painel inferior) */
+.dark .cont {
+    background: #252525;
+    /* painel escuro */
+    color: #e6e6e6;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.dark .tabs-nav {
+    background: #252525;
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark .tab-button {
+    color: #bdbdbd;
+}
+
+.dark .tab-button.active {
+    color: #fff;
+    border-bottom-color: #fff;
+}
+
+.dark .tab-content {
+    background: transparent;
+    color: #e6e6e6;
+}
+
+.dark .sobrepokemon p,
+.dark .stat-name,
+.dark .stat-value,
+.dark .move-name {
+    color: #e0e0e0;
+}
+
+/* Spinner: ajustar cor interna no modo escuro */
+.dark .spinner:after {
+    border: #fff;
 }

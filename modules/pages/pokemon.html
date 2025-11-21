@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../css/darkmode.css">
     <link rel="stylesheet" href="../css/details.css">
     <link rel="stylesheet" href="../css/types.css">
     <link rel="shortcut icon" href="../../assets/img/pokebola-logo.png" type="image/x-icon">
@@ -27,20 +28,24 @@
             </ul>
         </nav>
 
+        <!-- Menu toggle (mobile) -->
+        <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu">☰</button>
+
         <div class="search">
-            <input type="text" id="busca" placeholder="Buscar">
-            <button type="submit" id="botao">
-                <img src="../../assets/img/search-icon.png" alt=""> </button>
+            <input type="text" id="busca" placeholder="Search" aria-label="Campo de busca">
+            <button type="submit" id="botao" aria-label="Buscar" title="Buscar">
+                <img src="../../assets/img/search-icon.png" alt="Ícone buscar"> </button>
         </div>
 
         <div class="toggle-theme">
-            <button>
-                <img id="Moon-icon" src="../../assets/img/moon-icon.png" alt="Moon-icon"></img> </button>
+            <button aria-label="Alternar tema" title="Alternar tema">
+                <!-- padroniza id do ícone para 'toggleTheme' (mesmo que index.html) -->
+                <img id="toggleTheme" src="../../assets/img/moon-icon.png" alt="Alternar tema"> </button>
         </div>
     </header>
-    
 
-    
+
+
 
     <section class="pokemon-main-section">
         <!-- Navigation arrows -->
@@ -148,6 +153,22 @@
     </section>
 </body>
 
-<script src="../js/details.js" type="module"></script>
+<script>
+    (function () {
+        const toggle = document.getElementById('menu-toggle');
+        const header = document.querySelector('.header');
+        if (toggle && header) {
+            toggle.addEventListener('click', () => header.classList.toggle('menu-open'));
+            document.addEventListener('click', (e) => {
+                if (!header.contains(e.target) && header.classList.contains('menu-open')) {
+                    header.classList.remove('menu-open');
+                }
+            });
+        }
+    })();
+</script>
+
+<script type="module" src="../js/details.js"></script>
+
 
 </html>
