@@ -113,29 +113,6 @@ buttonShine.addEventListener('click', () => {
         typesContainer.appendChild(typeSpan);
     });
 
-    //Shine button
-
-    const sparkle = document.querySelector('.sparkle')
-
-    let clickedShine = false;
-    sparkle.addEventListener('click', () =>{ 
-        
-        if (clickedShine == false)
-        {
-            imgElement.src = pokemon.sprites.other["official-artwork"].shine_version;
-            clickedShine = true;
-            imgElement.classList.add('shine');
-        }
-        else
-        {
-            imgElement.src = pokemon.sprites.other["official-artwork"].front_default;
-            clickedShine = false;
-            imgElement.classList.add('noshine');
-        }
-    });
-     
-
-
 
     // Weaknesses
     const weaknessContainer = document.querySelector('#WeaknessesIMG');
