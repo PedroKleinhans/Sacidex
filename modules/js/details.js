@@ -55,6 +55,9 @@ function loadDetail() {
     setupTabs();
 }
 
+
+
+
 /**
  * Esta função preenche seu HTML usando os dados do Pokémon
  */
@@ -71,18 +74,34 @@ function fillPageWithPokemonData(pokemon) {
     imgElement.src = pokemon.sprites.other["official-artwork"].front_default;
     imgElement.alt = pokemon.name;
 
-    // Description
-    document.querySelector('.sobrepokemon p').textContent = pokemon.description;
+    //SHINE IMAGEM
+const buttonShine = document.querySelector('.sparkle');
 
-    // Gender rate
-    document.querySelector('.progress-fill-male').style.width = `${pokemon.genderRateMale}%`;
-    document.querySelector('.progress-text').textContent = `${pokemon.genderRateMale}% / ${100 - pokemon.genderRateMale}%`;
+buttonShine.addEventListener('click', () => {
 
-    // Catch rate
-    document.querySelector('.progress-fill-catch').style.width = `${pokemon.catchRate}%`;
-    document.querySelector('.catchrate-text').textContent = `${pokemon.catchRate}%`;
+    // leve efeito para suavizar a troca (parece um "ajuste de luz")
+    imgElement.style.filter = "brightness(0.95)";
 
-    // Types
+    setTimeout(() => {
+        const isShiny = imgElement.dataset.mode === "shine";
+
+        if (isShiny) {
+            imgElement.dataset.mode = "default";
+            imgElement.src = pokemon.sprites.other["official-artwork"].front_default;
+            imgElement.alt = pokemon.name;
+        } else {
+            imgElement.dataset.mode = "shine";
+            imgElement.src = pokemon.sprites.other["official-artwork"].front_shiny;
+            imgElement.alt = `${pokemon.name} Shine`;
+        }
+
+        // volta suave ao normal
+        imgElement.style.filter = "brightness(1)";
+
+    }, 50); // troca rápida, transição faz o resto
+});
+
+    // TIPOS
     const typesContainer = document.querySelector('#TypesIMG');
     typesContainer.innerHTML = "";
 

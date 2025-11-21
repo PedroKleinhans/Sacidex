@@ -115,3 +115,286 @@ a:hover {
         height: 100px;
     }
 }
+
+/* ------------Estilização filtro--------------*/
+
+.hidden {
+  display: none;
+}
+
+/* Loader (Uiverse.io by Juanes200122) */
+.loader-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 80px;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 3px dotted #fff;
+  border-style: solid solid dotted dotted;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 2s linear infinite;
+}
+
+.loader::after {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  border: 3px dotted #ff3d00;
+  border-style: solid solid dotted;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  animation: rotationBack 1s linear infinite;
+  transform-origin: center center;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotationBack {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Botão de abrir/fechar filtro */
+#filter-toggle {
+  border: none;
+  background: #ffffffcc;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  font-size: 20px;
+}
+
+#filter-toggle:hover {
+  background: #ffffffee;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+
+.filter-wrapper {
+  position: fixed;
+  top: 120px;
+  right: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Para Chrome, Edge, etc. */
+.filter-box::-webkit-scrollbar {
+  width: 5px;
+}
+
+.filter-box::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 10px;
+}
+
+.filter-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.filter-box {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 12px;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  max-width: 280px;
+  transition: all 0.3s ease;
+  max-height: 70vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #bbb transparent;
+}
+
+.filter-box.show::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filter-box.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.filter-box.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.type-btn {
+  border: none;
+  background: #f0f0f0;
+  color: #333;
+  border-radius: 6px;
+  padding: 8px 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.type-btn:hover {
+  background: #e0e0e0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.type-btn.active {
+  background: #0078ff;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 120, 255, 0.3);
+}
+
+/* =====================
+   Regras responsivas adicionais (header / nav / menu)
+   ===================== */
+
+/* Botão de menu - escondido em telas grandes */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  padding: 8px 10px;
+}
+
+/* Ajustes para telas pequenas */
+@media (max-width: 768px) {
+
+  /* Esconder nav padrão e mostrar botão de menu */
+  .nav {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: inline-block;
+  }
+
+  /* Header padding menor */
+  .header {
+    padding: 0 1rem;
+  }
+
+  /* Tornar logo e search menores */
+  .sacidex {
+    width: 90px;
+  }
+
+  .logo .icon {
+    width: 36px;
+  }
+
+  /* Search ocupa largura maior e ajusta posicionamento */
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search input {
+    width: 140px;
+  }
+
+  /* Posicionar filtro mais acessível em mobile */
+  .filter-wrapper {
+    top: auto;
+    bottom: 20px;
+    right: 16px;
+  }
+
+  .filter-box {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 240px;
+    max-height: 60vh;
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .type-btn {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+}
+
+/* Quando o menu está aberto, exibimos nav em mobile */
+header.menu-open .nav {
+  display: block;
+  /* garantir que o menu aberto apareça sobre todo conteúdo (cards/containers fixos) */
+  position: fixed;
+  top: 80px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+}
+
+header.menu-open .nav ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+/* garantir que o header e botões fiquem acima do conteúdo fixo */
+.header {
+  position: relative;
+  z-index: 300;
+}
+
+.toggle-theme {
+  z-index: 400;
+}
+
+.menu-toggle {
+  z-index: 400;
+}
+

@@ -93,17 +93,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    z-index: 10;
-    margin-bottom: -50px;
+    z-index: 15;
+    pointer-events: none;
+    transition: filter 0.3s ease;
 }
+
 
 .pokeimg img {
     width: 350px;
     height: auto;
     filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
-    animation: float 3s ease-in-out infinite;    
-    
+    animation: float 3s ease-in-out infinite;
+    transition: transform 0.5s ease;
 }
 
 @keyframes float {
