@@ -57,6 +57,8 @@ async function loadDetail() {
 }
 
 
+
+
 /**
  * Preenche os dados da página de detalhes
  */
@@ -74,6 +76,33 @@ function fillPageWithPokemonData(pokemon) {
     imgElement.src = pokemon.sprites.other["official-artwork"].front_default;
     imgElement.alt = pokemon.name;
 
+    //SHINE IMAGEM
+const buttonShine = document.querySelector('.sparkle');
+
+buttonShine.addEventListener('click', () => {
+
+    // leve efeito para suavizar a troca (parece um "ajuste de luz")
+    imgElement.style.filter = "brightness(0.95)";
+
+    setTimeout(() => {
+        const isShiny = imgElement.dataset.mode === "shine";
+
+        if (isShiny) {
+            imgElement.dataset.mode = "default";
+            imgElement.src = pokemon.sprites.other["official-artwork"].front_default;
+            imgElement.alt = pokemon.name;
+        } else {
+            imgElement.dataset.mode = "shine";
+            imgElement.src = pokemon.sprites.other["official-artwork"].front_shiny;
+            imgElement.alt = `${pokemon.name} Shine`;
+        }
+
+        // volta suave ao normal
+        imgElement.style.filter = "brightness(1)";
+
+    }, 50); // troca rápida, transição faz o resto
+});
+
     // TIPOS
     const typesContainer = document.querySelector('#TypesIMG');
     typesContainer.innerHTML = "";
@@ -84,7 +113,8 @@ function fillPageWithPokemonData(pokemon) {
         typesContainer.appendChild(span);
     });
 
-    // FRAQUEZAS
+
+    // Weaknesses
     const weaknessContainer = document.querySelector('#WeaknessesIMG');
     weaknessContainer.innerHTML = "";
     const weaknesses = getWeaknesses(pokemon.types);

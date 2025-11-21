@@ -3,7 +3,7 @@ import { createPokemonCard } from "./ui.js";
 export const pokemons = [];
 let currentPage = 0;
 const PAGE_SIZE = 20;
-const MAX_POKEMON = 1000;
+const MAX_POKEMON = 1025;
 
 export async function loadPokemon(id) {
     const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
@@ -40,3 +40,4 @@ export function resetPokemonPagination() {
     pokemons.length = 0;
     currentPage = 0;
 }
+
