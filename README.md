@@ -50,7 +50,7 @@ Este projeto foi desenvolvido pela equipe **Saciscode**, composta por:
 * Guilherme ([@GuilhermeRM-a1](https://github.com/GuilhermeRM-a1))
 * Luan
 * Thiago
-* Pedro
+* Pedro ([@PedroKleinhans](https://github.com/PedroKleinhans))
 
 ## 📄 Licença
 
