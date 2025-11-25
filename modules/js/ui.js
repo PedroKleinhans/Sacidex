@@ -144,8 +144,15 @@ export function createPokemonCard(pokemon) {
     imageContainer.classList.add('card-image');
 
     const image = document.createElement('img');
-    image.src = pokemon.sprites.other["official-artwork"].front_default;
+    // Usa CDN alternativo (assets.pokemon.com) - mais estável que raw.githubusercontent
+    const id3 = String(pokemon.id).padStart(3, '0');
+    image.src = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${id3}.png`;
     image.alt = pokemon.name;
+    // Fallback para pokemondb.net caso o assets.pokemon falhe
+    image.onerror = () => {
+        image.onerror = null; // previne loop infinito
+        image.src = `https://img.pokemondb.net/artwork/large/${pokemon.name}.jpg`;
+    };
     imageContainer.appendChild(image);
 
     // Montagem final

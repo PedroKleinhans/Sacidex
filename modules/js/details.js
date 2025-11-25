@@ -57,16 +57,16 @@ async function loadDetail() {
 }
 
 (function () {
-  const toggle = document.getElementById('menu-toggle');
-  const header = document.querySelector('.header');
-  if (toggle && header) {
-    toggle.addEventListener('click', () => header.classList.toggle('menu-open'));
-    document.addEventListener('click', (e) => {
-      if (!header.contains(e.target) && header.classList.contains('menu-open')) {
-        header.classList.remove('menu-open');
-      }
-    });
-  }
+    const toggle = document.getElementById('menu-toggle');
+    const header = document.querySelector('.header');
+    if (toggle && header) {
+        toggle.addEventListener('click', () => header.classList.toggle('menu-open'));
+        document.addEventListener('click', (e) => {
+            if (!header.contains(e.target) && header.classList.contains('menu-open')) {
+                header.classList.remove('menu-open');
+            }
+        });
+    }
 })();
 
 /**
@@ -83,35 +83,40 @@ function fillPageWithPokemonData(pokemon) {
 
     // IMAGEM
     const imgElement = document.querySelector('.pokeimg img');
-    imgElement.src = pokemon.sprites.other["official-artwork"].front_default;
+    const id3 = String(pokemon.id).padStart(3, '0');
+    imgElement.src = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${id3}.png`;
     imgElement.alt = pokemon.name;
+    imgElement.onerror = () => {
+        imgElement.onerror = null;
+        imgElement.src = `https://img.pokemondb.net/artwork/large/${pokemon.name}.jpg`;
+    };
 
     //SHINE IMAGEM
-const buttonShine = document.querySelector('.sparkle');
+    const buttonShine = document.querySelector('.sparkle');
 
-buttonShine.addEventListener('click', () => {
+    buttonShine.addEventListener('click', () => {
 
-    // leve efeito para suavizar a troca (parece um "ajuste de luz")
-    imgElement.style.filter = "brightness(0.95)";
+        
+        imgElement.style.filter = "brightness(0.95)";
 
-    setTimeout(() => {
-        const isShiny = imgElement.dataset.mode === "shine";
+        setTimeout(() => {
+            const isShiny = imgElement.dataset.mode === "shine";
 
-        if (isShiny) {
-            imgElement.dataset.mode = "default";
-            imgElement.src = pokemon.sprites.other["official-artwork"].front_default;
-            imgElement.alt = pokemon.name;
-        } else {
-            imgElement.dataset.mode = "shine";
-            imgElement.src = pokemon.sprites.other["official-artwork"].front_shiny;
-            imgElement.alt = `${pokemon.name} Shine`;
-        }
+            if (isShiny) {
+                imgElement.dataset.mode = "default";
+                const id3 = String(pokemon.id).padStart(3, '0');
+                imgElement.src = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${id3}.png`;
+                imgElement.alt = pokemon.name;
+            } else {
+                imgElement.dataset.mode = "shine";
+                imgElement.src = `https://img.pokemondb.net/sprites/home/shiny/${pokemon.name}.png`;
+                imgElement.alt = `${pokemon.name} Shine`;
+            }
 
-        // volta suave ao normal
-        imgElement.style.filter = "brightness(1)";
+            imgElement.style.filter = "brightness(1)";
 
-    }, 50); // troca rápida, transição faz o resto
-});
+        }, 50); // troca rápida, transição faz o resto
+    });
 
     // TIPOS
     const typesContainer = document.querySelector('#TypesIMG');
@@ -143,7 +148,6 @@ buttonShine.addEventListener('click', () => {
     fillMovesTab(pokemon.moves);
 
 }
-
 
 /**
  * Carrega dados da espécie (descrição, gender_rate, catch_rate)
@@ -479,9 +483,10 @@ async function fillEvolutionsTab(chain) {
             try {
                 const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${evo.id}`);
                 const data = await response.json();
+                const id3 = String(evo.id).padStart(3, '0');
                 return {
                     ...evo,
-                    image: data.sprites.other["official-artwork"].front_default,
+                    image: `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${id3}.png`,
                     types: data.types
                 };
             } catch (error) {
