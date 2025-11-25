@@ -104,12 +104,11 @@ function fillPageWithPokemonData(pokemon) {
 
             if (isShiny) {
                 imgElement.dataset.mode = "default";
-                const id3 = String(pokemon.id).padStart(3, '0');
-                imgElement.src = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${id3}.png`;
+                imgElement.src = pokemon.sprites.other['official-artwork'].front_default;
                 imgElement.alt = pokemon.name;
             } else {
                 imgElement.dataset.mode = "shine";
-                imgElement.src = `https://img.pokemondb.net/sprites/home/shiny/${pokemon.name}.png`;
+                imgElement.src = pokemon.sprites.other['official-artwork'].front_shiny;
                 imgElement.alt = `${pokemon.name} Shine`;
             }
 

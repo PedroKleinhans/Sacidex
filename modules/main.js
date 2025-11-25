@@ -29,6 +29,7 @@ favoriteButton.addEventListener("click", () => {
 const headertheme = document.querySelector('header');
 const iconimglogo = document.querySelector('.icon');
 const logo = document.querySelector('.sacidex');
+const filterLogo = document.getElementById('filter-toggle');
 
 function aplicarTema(tema) {
   const cardtheme = document.querySelectorAll('.card');
@@ -44,6 +45,7 @@ function aplicarTema(tema) {
     if (toggleThemeImg) toggleThemeImg.src = '/assets/img/sunwhite.png';
     if (iconimglogo) iconimglogo.src = '/assets/img/pokebola-logo-branca.png';
     if (logo) logo.src = '/assets/img/logo-sacidex-branca.png';
+    if (filterLogo) filterLogo.src = '/assets/img/darkFilter.png';
   } else {
     document.body.classList.remove('dark');
     headertheme && headertheme.classList.remove('dark-header');

@@ -316,6 +316,14 @@ body.dark header.menu-open .nav a {
     background: rgba(255, 255, 255, 0.12);
 }
 
+.dark #filter-toggle img {
+    filter: invert(1);
+}
+
+.dark #menu-toggle {
+    color: #e0e0e0;
+}  ;
+
 /* Container de detalhes (painel inferior) */
 .dark .cont {
     background: #252525;
