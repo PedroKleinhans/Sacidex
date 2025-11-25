@@ -56,8 +56,18 @@ async function loadDetail() {
     setupTabs();
 }
 
-
-
+(function () {
+  const toggle = document.getElementById('menu-toggle');
+  const header = document.querySelector('.header');
+  if (toggle && header) {
+    toggle.addEventListener('click', () => header.classList.toggle('menu-open'));
+    document.addEventListener('click', (e) => {
+      if (!header.contains(e.target) && header.classList.contains('menu-open')) {
+        header.classList.remove('menu-open');
+      }
+    });
+  }
+})();
 
 /**
  * Preenche os dados da página de detalhes

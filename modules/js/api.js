@@ -1,5 +1,3 @@
-import { createPokemonCard } from "./ui.js";
-
 export const pokemons = [];
 let currentPage = 0;
 const PAGE_SIZE = 20;

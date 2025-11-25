@@ -152,22 +152,6 @@
         </div>
     </section>
 </body>
-
-<script>
-    (function () {
-        const toggle = document.getElementById('menu-toggle');
-        const header = document.querySelector('.header');
-        if (toggle && header) {
-            toggle.addEventListener('click', () => header.classList.toggle('menu-open'));
-            document.addEventListener('click', (e) => {
-                if (!header.contains(e.target) && header.classList.contains('menu-open')) {
-                    header.classList.remove('menu-open');
-                }
-            });
-        }
-    })();
-</script>
-
 <script type="module" src="../js/details.js"></script>
 
 

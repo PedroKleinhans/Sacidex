@@ -181,7 +181,6 @@ export function createPokemonCard(pokemon) {
     return card;
 }
 
-// Corrige o nome da função (era "createDeatailCard")
 export function createDetailCard(pokemon) {
     const container = document.querySelector('.pokemon-id');
     container.textContent = `#${pokemon.id.toString().padStart(4, '0')}`;
